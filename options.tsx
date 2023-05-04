@@ -1,39 +1,73 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 function OptionsIndex() {
-  const [data, setData] = useState([])
+  const [data, setData] = useState({})
+
+  useEffect(() => {
+    chrome.tabs.query({}, function (tabs) {
+      const urls = tabs.map((item) => {
+        console.log(item.url)
+        return {
+          tab: item,
+          url: new URL(item.url)
+        }
+      })
+      let m = {}
+      for (let u of urls) {
+        if (Object.keys(m).includes(u.url.hostname)) {
+          m[u.url.hostname].push(u)
+        } else {
+          m[u.url.hostname] = [u]
+        }
+      }
+      setData(m)
+    })
+  }, [])
 
   return (
     <div>
-      <h1>
-        Welcome to your <a href="https://www.plasmo.com">Plasmo</a> Extension!
-      </h1>
-      <h2>This is the Option UI page!</h2>
+      <h1>All your open tabs!</h1>
 
-      <div>
-        <button
-          onClick={() => {
-            console.log("this is click")
-            setData(["1231232"])
-            chrome.tabs.query({}, function (tabs) {
-              const urls = tabs.map((item) => {
-                console.log(item.url)
-                return item.url
-              })
-              setData(urls)
-            })
-          }}>
-          hello
-        </button>
-      </div>
+      {Object.keys(data)
+        .sort()
+        .map((item) => {
+          try {
+            return (
+              <div>
+                <h2>
+                  {item}
+                  <button
+                    onClick={() => {
+                      data[item].forEach((e) => {
+                        chrome.tabs.remove(e.tab.id)
+                      })
+                    }}>
+                    close all
+                  </button>
+                </h2>
 
-      {true &&
-        data.map((item) => {
-          return (
-            <div>
-              <a href={item} target="_blank">{item}</a>
-            </div>
-          )
+                <div>
+                  {data[item].sort().map((i) => {
+                    return (
+                      <div>
+                        <a href={i.url.href} target="_blank">
+                          {i.tab.title}
+                        </a>
+                        <button
+                          onClick={() => {
+                            chrome.tabs.remove(i.tab.id)
+                          }}>
+                          close
+                        </button>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            )
+          } catch (error) {
+            console.log(error)
+          }
         })}
     </div>
   )

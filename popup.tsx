@@ -1,28 +1,76 @@
 import { useEffect, useState } from "react"
 
 function IndexPopup() {
-  const [data, setData] = useState("")
+  const [data, setData] = useState({})
+
+  useEffect(() => {
+    chrome.tabs.query({}, function (tabs) {
+      const urls = tabs.map((item) => {
+        console.log(item.url)
+        return {
+          tab: item,
+          url: new URL(item.url)
+        }
+      })
+      let m = {}
+      for (let u of urls) {
+        if (Object.keys(m).includes(u.url.hostname)) {
+          m[u.url.hostname].push(u)
+        } else {
+          m[u.url.hostname] = [u]
+        }
+      }
+      setData(m)
+    })
+  }, [])
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        padding: 16
-      }}>
-      <h2>
-        Welcome to your
-        <a href="https://www.plasmo.com" target="_blank">
-          {" "}
-          Plasmo
-        </a>{" "}
-        Extension!
-      </h2>
-      <input onChange={(e) => setData(e.target.value)} value={data} />
-      <a href="https://docs.plasmo.com" target="_blank">
-        View Docs
-      </a>
+    <div>
+      <h1>All your open tabs!</h1>
 
+      {Object.keys(data)
+        .sort()
+        .map((item) => {
+          try {
+            return (
+              <div>
+                <h2>
+                  {item}
+                  <button
+                    onClick={() => {
+                      data[item].forEach((e) => {
+                        chrome.tabs.remove(e.tab.id)
+                      })
+                      window.location.reload()
+                    }}>
+                    close all
+                  </button>
+                </h2>
+
+                <div>
+                  {data[item].sort().map((i) => {
+                    return (
+                      <div>
+                        <a href={i.url.href} target="_blank">
+                          {i.tab.title}
+                        </a>
+                        <button
+                          onClick={() => {
+                            chrome.tabs.remove(i.tab.id)
+                            window.location.reload()
+                          }}>
+                          close
+                        </button>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            )
+          } catch (error) {
+            console.log(error)
+          }
+        })}
     </div>
   )
 }
