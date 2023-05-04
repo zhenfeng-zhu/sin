@@ -41,6 +41,7 @@ function OptionsIndex() {
                       data[item].forEach((e) => {
                         chrome.tabs.remove(e.tab.id)
                       })
+                      window.location.reload()
                     }}>
                     close all
                   </button>
@@ -56,6 +57,7 @@ function OptionsIndex() {
                         <button
                           onClick={() => {
                             chrome.tabs.remove(i.tab.id)
+                            window.location.reload()
                           }}>
                           close
                         </button>
