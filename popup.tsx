@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 function IndexPopup() {
   const [data, setData] = useState("")
@@ -11,8 +11,9 @@ function IndexPopup() {
         padding: 16
       }}>
       <h2>
-        Welcome to your{" "}
+        Welcome to your
         <a href="https://www.plasmo.com" target="_blank">
+          {" "}
           Plasmo
         </a>{" "}
         Extension!
@@ -21,6 +22,7 @@ function IndexPopup() {
       <a href="https://docs.plasmo.com" target="_blank">
         View Docs
       </a>
+
     </div>
   )
 }
