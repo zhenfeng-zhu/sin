@@ -6,11 +6,15 @@ import {
   SmallCloseIcon
 } from "@chakra-ui/icons"
 import {
+  Badge,
   Box,
+  Button,
   Center,
   Container,
+  Divider,
   Flex,
   Heading,
+  IconButton,
   Link,
   List,
   ListIcon,
@@ -62,20 +66,33 @@ function SinTab() {
             try {
               return (
                 <ListItem borderWidth="1px" borderRadius="lg" overflow="hidden">
-                  <div>
-                    <Tag size="lg" variant="solid" colorScheme="blue">
-                      <TagLabel>{item}</TagLabel>
-                      <TagCloseButton
-                        onClick={() => {
-                          data[item].forEach((e) => {
-                            chrome.tabs.remove(e.tab.id)
-                          })
-                          window.location.reload()
-                        }}></TagCloseButton>
-                    </Tag>
-                  </div>
+                  <Box px={1}>
+                    <Flex>
+                      <Box width={"400px"} overflow={"hidden"}>
+                        <Badge fontSize="xl" colorScheme="blue">
+                          {item}
+                        </Badge>
+                      </Box>
+                      <Center>
+                        <IconButton
+                          aria-label="close tab"
+                          size="xs"
+                          variant="outline"
+                          colorScheme="red"
+                          icon={<CloseIcon />}
+                          onClick={() => {
+                            data[item].forEach((e) => {
+                              chrome.tabs.remove(e.tab.id)
+                            })
+                            window.location.reload()
+                          }}></IconButton>
+                      </Center>
+                    </Flex>
+                  </Box>
 
-                  <List spacing={3}>
+                  <Divider p="2px" />
+
+                  <List spacing={3} >
                     {data[item]
                       .sort((a, b) => {
                         return a.tab.title >= b.tab.title ? -1 : 1
@@ -85,16 +102,7 @@ function SinTab() {
                           <ListItem>
                             <Box px={1}>
                               <Flex color="white">
-                                <Center bg="white">
-                                  <button
-                                    onClick={() => {
-                                      chrome.tabs.remove(i.tab.id)
-                                      window.location.reload()
-                                    }}>
-                                    <ListIcon as={MinusIcon} color="red" />
-                                  </button>
-                                </Center>
-                                <Box overflow={"hidden"}>
+                                <Box width={"400px"} overflow={"hidden"}>
                                   <Link
                                     href={i.url.href}
                                     color={"green"}
@@ -111,6 +119,20 @@ function SinTab() {
                                     </Text>
                                   </Link>
                                 </Box>
+
+                                <Center bg="white">
+                                  <IconButton
+                                    aria-label="close tab"
+                                    size="xs"
+                                    variant="ghost"
+                                    colorScheme="red"
+                                    icon={<MinusIcon />}
+                                    onClick={() => {
+                                      chrome.tabs.remove(i.tab.id)
+                                      window.location.reload()
+                                    }}
+                                  />
+                                </Center>
                               </Flex>
                             </Box>
                           </ListItem>
