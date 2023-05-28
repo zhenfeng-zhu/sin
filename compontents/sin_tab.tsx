@@ -19,7 +19,7 @@ import {
 } from "@chakra-ui/react"
 import { useEffect, useState } from "react"
 
-function SinTab() {
+function SinTab(props) {
   const [data, setData] = useState({})
 
   useEffect(() => {
@@ -46,15 +46,18 @@ function SinTab() {
   }, [])
 
   return (
-    <Container borderWidth="1px" borderRadius="lg">
-      <Heading>All your open tabs!</Heading>
-      <List spacing={2}>
+    <Container hidden={props.hide} px={"1px"} mt={"2"}>
+      <List spacing={2}> 
         {Object.keys(data)
           .sort()
-          .map((item) => {
+          .map((item, id) => {
             try {
               return (
-                <ListItem borderWidth="1px" borderRadius="lg" overflow="hidden">
+                <ListItem
+                  key={id}
+                  borderWidth="1px"
+                  borderRadius="lg"
+                  overflow="hidden">
                   <Box px={1} bgColor={"#457b9d"}>
                     <Flex>
                       <Box width={"400px"} overflow={"hidden"}>
@@ -86,9 +89,9 @@ function SinTab() {
                       .sort((a, b) => {
                         return a.tab.title >= b.tab.title ? -1 : 1
                       })
-                      .map((i) => {
+                      .map((i, id) => {
                         return (
-                          <ListItem>
+                          <ListItem key={id}>
                             <Box px={1}>
                               <Flex color="white">
                                 <IconButton
