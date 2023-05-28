@@ -1,14 +1,11 @@
 import {
-  CheckCircleIcon,
   CloseIcon,
   ExternalLinkIcon,
-  MinusIcon,
-  SmallCloseIcon
+  HamburgerIcon,
+  MinusIcon
 } from "@chakra-ui/icons"
 import {
-  Badge,
   Box,
-  Button,
   Center,
   Container,
   Divider,
@@ -17,14 +14,7 @@ import {
   IconButton,
   Link,
   List,
-  ListIcon,
   ListItem,
-  Square,
-  Tag,
-  TagCloseButton,
-  TagLabel,
-  TagLeftIcon,
-  TagRightIcon,
   Text
 } from "@chakra-ui/react"
 import { useEffect, useState } from "react"
@@ -38,7 +28,6 @@ function SinTab() {
 
       tabs
         .map((item) => {
-          console.log(item.url)
           return {
             tab: item,
             url: new URL(item.url)
@@ -66,19 +55,19 @@ function SinTab() {
             try {
               return (
                 <ListItem borderWidth="1px" borderRadius="lg" overflow="hidden">
-                  <Box px={1}>
+                  <Box px={1} bgColor={"#457b9d"}>
                     <Flex>
                       <Box width={"400px"} overflow={"hidden"}>
-                        <Badge fontSize="xl" colorScheme="blue">
+                        <Text fontSize="xl" as="b" color={"white"}>
                           {item}
-                        </Badge>
+                        </Text>
                       </Box>
                       <Center>
                         <IconButton
                           aria-label="close tab"
                           size="xs"
                           variant="outline"
-                          colorScheme="red"
+                          colorScheme="#e63946"
                           icon={<CloseIcon />}
                           onClick={() => {
                             data[item].forEach((e) => {
@@ -92,7 +81,7 @@ function SinTab() {
 
                   <Divider p="2px" />
 
-                  <List spacing={3} >
+                  <List spacing={3}>
                     {data[item]
                       .sort((a, b) => {
                         return a.tab.title >= b.tab.title ? -1 : 1
@@ -102,6 +91,32 @@ function SinTab() {
                           <ListItem>
                             <Box px={1}>
                               <Flex color="white">
+                                <IconButton
+                                  variant="ghost"
+                                  icon={<HamburgerIcon />}
+                                  size="xs"
+                                  colorScheme={"teal"}
+                                  aria-label="open the tab"
+                                  onClick={async () => {
+                                    const currWindow =
+                                      await chrome.windows.getCurrent()
+                                    if (currWindow.id == i.tab.windowId) {
+                                      chrome.tabs.update(i.tab.id, {
+                                        active: true
+                                      })
+                                    } else {
+                                      chrome.windows.update(
+                                        i.tab.windowId,
+                                        { focused: true },
+                                        function () {
+                                          chrome.tabs.update(i.tab.id, {
+                                            active: true
+                                          })
+                                        }
+                                      )
+                                    }
+                                  }}
+                                />
                                 <Box width={"400px"} overflow={"hidden"}>
                                   <Link
                                     href={i.url.href}
