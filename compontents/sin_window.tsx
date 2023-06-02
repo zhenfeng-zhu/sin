@@ -39,7 +39,11 @@ function SinWindow(props) {
 
   return (
     <AutoComplete>
-      <AutoCompleteInput placeholder="search your tabs" variant="filled" onChange={props.onInputChange} />
+      <AutoCompleteInput
+        placeholder="search your tabs"
+        variant="filled"
+        onChange={props.onInputChange}
+      />
       <AutoCompleteList>
         {Object.entries(continents).map(([continent, tabs], co_id) => {
           return (
